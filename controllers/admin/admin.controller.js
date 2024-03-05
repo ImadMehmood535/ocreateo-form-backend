@@ -80,8 +80,6 @@ const updateAdmin = async (req, res) => {
       return res.status(response.status.code).json(response);
     }
 
-    console.log(updatedAdmin, "updatedAdmin");
-
     const response = okResponse(
       updatedAdminDto(updatedAdmin),
       "Admin updated successfully"
@@ -93,4 +91,41 @@ const updateAdmin = async (req, res) => {
   }
 };
 
-module.exports = { registerAdmin, loginAdmin, updateAdmin };
+const changePassword = async (req, res) => {
+  try {
+    const { oldPassword, newPassword } = req.body;
+    const id = req.adminId;
+    const admin = await Admin.findOne({
+      _id: id,
+      password: oldPassword,
+    });
+
+    if (!admin) {
+      const response = forbiddenResponse("Incorrect Password");
+      return res.status(response.status.code).json(response);
+    }
+    const updatedAdmin = await Admin.findByIdAndUpdate(
+      id,
+      { password: newPassword },
+      { new: true } 
+    );
+
+    if (!updatedAdmin) {
+      const response = forbiddenResponse("Try later...something went wrong");
+      return res.status(response.status.code).json(response);
+    }
+
+    const response = okResponse(
+      updatedAdminDto(updatedAdmin),
+      "Password Changed Successfully"
+    );
+
+    return res.status(response.status.code).json(response);
+  } catch (error) {
+    const response = serverErrorResponse(error.message);
+    return res.status(response.status.code).json(response);
+  }
+};
+
+
+module.exports = { registerAdmin, loginAdmin, updateAdmin, changePassword };

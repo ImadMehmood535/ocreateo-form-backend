@@ -12,7 +12,12 @@ const verifyAuthentication = (req, res, next) => {
 
   if (authHeader) {
     accessToken = authHeader.split(" ")[1];
+    if (!accessToken){
+      accessToken = authHeader;
+    }
   }
+
+  console.log(authHeader , "accesstoken")
 
   if (!accessToken) {
     const response = unauthorizedResponse("Unauthorized");

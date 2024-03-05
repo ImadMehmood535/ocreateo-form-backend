@@ -6,7 +6,7 @@ class TokenService {
   }
 
   generateAccessToken(user) {
-    return jwt.sign({ user }, this.secretKey, { expiresIn: "7d" });
+    return jwt.sign({ user }, this.secretKey, { expiresIn: "30d" });
   }
 
   generateRefreshToken(user) {
@@ -15,7 +15,7 @@ class TokenService {
 
   verifyAccessToken(accessToken) {
     try {
-      const decoded = jwt.verify(accessToken, "6ad2a9288856c090b7bb694a3448582b4e59f14486a1cae919b012d84e4ee209");
+      const decoded = jwt.verify(accessToken, this.secretKey);
       return decoded.user;
     } catch (error) {
       return null;
